@@ -14,11 +14,11 @@ export const loggerMiddleware = (req: Request, res: Response, next: NextFunction
     };
     
     if (res.statusCode >= 500) {
-      logger.error(meta, message);
+      logger.error(message, meta);
     } else if (res.statusCode >= 400) {
-      logger.warn(meta, message);
+      logger.warn(message, meta);
     } else {
-      logger.info(meta, message);
+      logger.info(message, meta);
     }
   });
   next();

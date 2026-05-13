@@ -1,0 +1,45 @@
+@baseUrl = http://localhost:3000
+
+### Health Check
+GET {{baseUrl}}/health
+
+### Info Endpoint
+GET {{baseUrl}}/info
+
+### Metrics (Prometheus)
+GET {{baseUrl}}/metrics
+
+### Slow Request (Simulation)
+GET {{baseUrl}}/slow?duration=1000
+
+### --- Item CRUD Operations ---
+
+### Create Item
+# @name createItem
+POST {{baseUrl}}/items
+Content-Type: application/json
+
+{
+    "name": "Sample Item",
+    "quantity": "10",
+    "price": 29.99
+}
+
+### Get All Items
+GET {{baseUrl}}/items
+
+### Update Item
+# Replace {id} with a real ID from the Get All Items request
+@itemId = {{createItem.response.body._id}}
+PUT {{baseUrl}}/items/{{itemId}}
+Content-Type: application/json
+
+{
+    "name": "Updated Sample Item",
+    "quantity": 15,
+    "price": 34.99
+}
+
+### Delete Item
+# Replace {id} with a real ID
+DELETE {{baseUrl}}/items/{{itemId}}

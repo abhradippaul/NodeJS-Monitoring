@@ -1,10 +1,16 @@
 import app from './app.js';
 import logger from './utils/logger.js';
+import { config } from './utils/config.js';
+import { connectDB } from './config/db.js';
 
-const PORT = process.env.PORT || 3000;
+const PORT = config.port;
 
-app.listen(PORT, () => {
-  logger.info(`Server is running on http://localhost:${PORT}`);
-  logger.info(`Health endpoint: http://localhost:${PORT}/health`);
-  logger.info(`Info endpoint: http://localhost:${PORT}/info`);
-});
+const startServer = async () => {
+  await connectDB();
+
+  app.listen(PORT, () => {
+    logger.info(`Server is running on http://localhost:${PORT}`);
+  });
+};
+
+startServer();

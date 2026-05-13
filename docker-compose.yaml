@@ -1,0 +1,34 @@
+services:
+  nodejs-monitoring:
+    build: .
+    container_name: nodejs-monitoring
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    networks:
+      - nodejs-monitoring
+    restart: no
+
+  load-test:
+    image: python:3.11-slim
+    container_name: load-test
+    # profiles: ["tools"]
+    depends_on:
+      - nodejs-monitoring
+    volumes:
+      - ./scripts:/scripts
+    environment:
+      - TARGET_URL=http://nodejs-monitoring:3000
+      - MAX_USERS=30
+      - DURATION=600
+      - CYCLE=120
+    command: >
+      sh -c "pip install requests && python /scripts/load_test.py"
+    networks:
+      - nodejs-monitoring
+    restart: no
+
+networks:
+  nodejs-monitoring:
+    driver: bridge
