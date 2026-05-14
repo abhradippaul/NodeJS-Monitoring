@@ -11,7 +11,7 @@ const logRoutes = (app: Application) => {
 
     try {
         const endpoints = listEndpoints(app);
-        
+
         if (!endpoints || endpoints.length === 0) {
             logger.warn('No routes found or express-list-endpoints is incompatible with this Express version.');
             return;
@@ -21,7 +21,7 @@ const logRoutes = (app: Application) => {
             const methods = Array.isArray(endpoint.methods)
                 ? endpoint.methods.join(', ').toUpperCase()
                 : Object.keys(endpoint.methods || {}).join(', ').toUpperCase();
-            
+
             return {
                 Method: methods || 'UNKNOWN',
                 Path: endpoint.path
