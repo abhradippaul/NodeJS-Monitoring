@@ -1,45 +1,51 @@
-import winston from 'winston';
-import DailyRotateFile from 'winston-daily-rotate-file';
+import { createLogger, format, transports } from 'winston';
 import { config } from '../utils/config.js';
 
-const myFormat = winston.format.printf(({ level, message, label, timestamp }) => {
-    return `${timestamp} ${label} [${level}]: ${message}`; // LOG FORMAT
-});
+const { combine, timestamp, json, errors } = format;
 
-const transports: winston.transport[] = [
-    new winston.transports.Console({
-        level: 'debug',
-        format: winston.format.combine(
-            winston.format.colorize(),
-            winston.format.simple(),
-            winston.format.timestamp(),
-            winston.format.align(),
-            winston.format.label({ label: 'dev' }),
-            myFormat,
-        )
-    })
-];
+const devLogger = () => {
+    return createLogger({
+        level: config.logLevel,
+        format: combine(timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), errors({ stack: true }), json()),
+        transports: [
+            new transports.File({ filename: config.logFile }),
+            new transports.File({ filename: config.errorFile, level: 'error' }),
+            new transports.Console() // ONLY PRINTING LOGS IN TERMINAL
+        ]
+    });
+};
 
-// Add file rotation transport if not in "console-only" mode
-if (config.logToFile) {
-    transports.push(
-        new DailyRotateFile({
-            filename: 'logs/app-%DATE%.log',
-            datePattern: 'YYYY-MM-DD',
-            zippedArchive: true,
-            maxSize: '20m',
-            maxFiles: '14d',
-            format: winston.format.combine(
-                winston.format.timestamp(),
-                winston.format.json()
-            )
-        })
-    );
-}
+// const elasticTransport = (spanTracerId, indexPrefix) => {
+//     const esTransportOpts = {
+//         level: 'debug',
+//         indexPrefix,
+//         indexSuffixPattern: 'YYYY-MM-DD',
+//         transformer: (logData) => {
+//             const spanId = spanTracerId;
+//             return {
+//                 '@timestamp': new Date(),
+//                 severity: logData.level,
+//                 stack: logData.meta.stack,
+//                 service_name: packagejson.name,
+//                 service_version: packagejson.version,
+//                 message: `${logData.message}`,
+//                 data: JSON.stringify(logData.meta.data),
+//                 span_id: spanId,
+//                 utcTimestamp: logData.timestamp
+//             };
+//         },
+//         clientOpts: {
+//             node: 'http://localhost:9200',
+//             maxRetries: 5,
+//             requestTimeout: 10000,
+//             sniffOnStart: false,
+//             auth: {
+//                 username: ENV.ELASTIC_USER,
+//                 password: ENV.ELASTIC_PASSWORD,
+//             },
+//         },
+//     };
+//     return esTransportOpts;
+// };
 
-const logger = winston.createLogger({
-    level: config.logLevel,
-    transports
-});
-
-export default logger;
+export default devLogger;

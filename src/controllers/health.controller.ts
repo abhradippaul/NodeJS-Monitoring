@@ -1,11 +1,14 @@
 import type { Request, Response } from 'express';
-import logger from '../utils/logger.js';
+import logger from '../logger/index.js';
 
 export const getHealth = (req: Request, res: Response) => {
   logger.info('Health check requested');
   res.status(200).json({
-    status: 'UP',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime()
+    message: "Successfully fetched health status",
+    data: {
+      status: 'UP',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime()
+    }
   });
 };

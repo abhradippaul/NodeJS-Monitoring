@@ -1,4 +1,15 @@
 services:
+  deployed:
+    image: abhradippaul/nodejs-monitoring:latest
+    container_name: deployed-nodejs-monitoring
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    networks:
+      - nodejs-monitoring
+    restart: no
+
   nodejs-monitoring:
     build: .
     container_name: nodejs-monitoring

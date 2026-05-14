@@ -2,20 +2,24 @@ import express from 'express';
 import type { Request, Response, NextFunction, Express } from 'express';
 import { loggerMiddleware } from './middleware/logger.middleware.js';
 import healthRoutes from './routes/health.routes.js';
-import infoRoutes from './routes/info.routes.js'; 
+import infoRoutes from './routes/info.routes.js';
 import itemRoutes from './routes/item.routes.js';
-import logger from './utils/logger.js';
+import orderRoutes from './routes/order.routes.js';
 import { register, startMonitoring } from './utils/metrics.js';
+import logger from './logger/index.js';
+import logRoutes from './utils/logRoutes.js';
 
-const app:Express = express();
+const app: Express = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(startMonitoring);
 app.use(loggerMiddleware);
 
 app.use('/health', healthRoutes);
 app.use('/info', infoRoutes);
 app.use('/items', itemRoutes);
+app.use('/orders', orderRoutes);
 
 app.get('/slow', async (req: Request, res: Response) => {
   const duration = parseInt(req.query.duration as string) || 3000;
@@ -40,5 +44,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   logger.error(`Unhandled error ${err}`);
   res.status(500).json({ error: 'Internal Server Error' });
 });
+
+logRoutes(app);
 
 export default app;

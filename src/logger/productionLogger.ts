@@ -1,7 +1,7 @@
 import { createLogger, format, transports } from 'winston';
 import { config } from '../utils/config.js';
 
-const uatLogger = () => {
+const productionLogger = () => {
     return createLogger({
         level: config.logLevel,
         format: format.json(),
@@ -13,4 +13,4 @@ const uatLogger = () => {
     });
 };
 
-export default uatLogger;
+export default productionLogger;

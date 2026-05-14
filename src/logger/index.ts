@@ -1,19 +1,16 @@
-import devLogger from './devLogger';
-import uatLogger from './uatLogger';
-import productionLogger from './productionLogger';
+import { Logger } from 'winston';
+import devLogger from './devLogger.js';
+import uatLogger from './uatLogger.js';
+import productionLogger from './productionLogger.js';
 import { config } from '../utils/config.js';
 
-let logger = null;
+let logger: Logger;
 
 if (config.nodeEnv === 'production') {
     logger = productionLogger();
-}
-
-if (config.nodeEnv === 'uat') {
+} else if (config.nodeEnv === 'uat') {
     logger = uatLogger();
-}
-
-if (config.nodeEnv === 'dev') {
+} else {
     logger = devLogger();
 }
 

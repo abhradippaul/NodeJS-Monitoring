@@ -11,7 +11,15 @@ const ItemSchema: Schema = new Schema({
   quantity: { type: Number, required: true },
   price: { type: Number, required: true }
 }, {
-  timestamps: true
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
+});
+
+ItemSchema.virtual('orders', {
+  ref: 'Order',
+  localField: '_id',
+  foreignField: 'items.item'
 });
 
 export default mongoose.model<IItem>('Item', ItemSchema);

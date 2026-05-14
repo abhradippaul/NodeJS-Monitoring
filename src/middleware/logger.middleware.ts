@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import logger from '../utils/logger.js';
+import logger from '../logger/index.js';
 
 export const loggerMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const start = Date.now();
@@ -12,7 +12,7 @@ export const loggerMiddleware = (req: Request, res: Response, next: NextFunction
       statusCode: res.statusCode,
       duration: `${duration}ms`
     };
-    
+
     if (res.statusCode >= 500) {
       logger.error(message, meta);
     } else if (res.statusCode >= 400) {

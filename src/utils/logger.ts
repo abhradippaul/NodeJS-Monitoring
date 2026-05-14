@@ -37,7 +37,7 @@ if (config.logToFile) {
   );
 }
 
-const logger = winston.createLogger({
+const logger: winston.Logger = winston.createLogger({
   level: config.logLevel,
   transports
 });

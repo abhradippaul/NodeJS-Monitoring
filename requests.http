@@ -21,16 +21,21 @@ Content-Type: application/json
 
 {
     "name": "Sample Item",
-    "quantity": "10",
+    "quantity": 10,
     "price": 29.99
 }
 
 ### Get All Items
 GET {{baseUrl}}/items
 
+### Get Items with Orders
+GET {{baseUrl}}/items/with-orders
+
+### Get Item with Orders (Specific)
+@itemId = {{createItem.response.body.data._id}}
+GET {{baseUrl}}/items/{{itemId}}/orders
+
 ### Update Item
-# Replace {id} with a real ID from the Get All Items request
-@itemId = {{createItem.response.body._id}}
 PUT {{baseUrl}}/items/{{itemId}}
 Content-Type: application/json
 
@@ -41,5 +46,28 @@ Content-Type: application/json
 }
 
 ### Delete Item
-# Replace {id} with a real ID
 DELETE {{baseUrl}}/items/{{itemId}}
+
+
+### --- Order CRUD Operations ---
+
+### Create Order
+# @name createOrder
+POST {{baseUrl}}/orders
+Content-Type: application/json
+
+{
+    "items": [
+        {
+            "item": "{{itemId}}",
+            "quantity": 2
+        }
+    ]
+}
+
+### Get All Orders
+GET {{baseUrl}}/orders
+
+### Get Order by ID
+@orderId = {{createOrder.response.body.data._id}}
+GET {{baseUrl}}/orders/{{orderId}}
