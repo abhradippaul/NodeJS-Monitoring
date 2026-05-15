@@ -9,6 +9,13 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - service: Auth-Service
+            image: auth-service-monitoring
+          - service: Item-Service
+            image: item-service-monitoring
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -26,11 +33,13 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
-      - name: Build and push
+      - name: Build and push ${{ matrix.image }}
         uses: docker/build-push-action@v7
         with:
-          context: .
+          context: ./${{ matrix.service }}
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/nodejs-monitoring:latest
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

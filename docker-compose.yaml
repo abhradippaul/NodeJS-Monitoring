@@ -1,36 +1,36 @@
 services:
-  deployed:
-    image: abhradippaul/nodejs-monitoring:latest
-    container_name: deployed-nodejs-monitoring
+  auth-service:
+    build: ./Auth-Service
+    container_name: auth-service
     ports:
-      - "3000:3000"
+      - "3002:3002"
     env_file:
-      - .env
+      - ./Auth-Service/.env
     networks:
       - nodejs-monitoring
-    restart: no
+    restart: unless-stopped
 
-  nodejs-monitoring:
-    build: .
-    container_name: nodejs-monitoring
+  item-service:
+    build: ./Item-Service
+    container_name: item-service
     ports:
-      - "3000:3000"
+      - "3001:3001"
     env_file:
-      - .env
+      - ./Item-Service/.env
     networks:
       - nodejs-monitoring
-    restart: no
+    restart: unless-stopped
 
   load-test:
     image: python:3.11-slim
     container_name: load-test
-    # profiles: ["tools"]
     depends_on:
-      - nodejs-monitoring
+      - item-service
+      - auth-service
     volumes:
       - ./scripts:/scripts
     environment:
-      - TARGET_URL=http://nodejs-monitoring:3000
+      - TARGET_URL=http://item-service:3001
       - MAX_USERS=30
       - DURATION=600
       - CYCLE=120
