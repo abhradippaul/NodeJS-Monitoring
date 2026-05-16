@@ -16,6 +16,8 @@ jobs:
             image: auth-service-monitoring
           - service: Item-Service
             image: item-service-monitoring
+          - service: Order-Service
+            image: order-service-monitoring
     steps:
       - name: Checkout code
         uses: actions/checkout@v6

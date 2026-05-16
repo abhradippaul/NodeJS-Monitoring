@@ -3,7 +3,7 @@ import type { Request, Response, NextFunction, Express } from 'express';
 import { loggerMiddleware } from './middleware/logger.middleware.js';
 import healthRoutes from './routes/health.routes.js';
 import infoRoutes from './routes/info.routes.js';
-import itemRoutes from './routes/item.routes.js';
+import orderRoutes from './routes/order.routes.js';
 import { register, startMonitoring } from './utils/metrics.js';
 import logger from './logger/index.js';
 import logRoutes from './utils/logRoutes.js';
@@ -18,7 +18,7 @@ app.use(loggerMiddleware);
 
 app.use('/health', healthRoutes);
 app.use('/info', infoRoutes);
-app.use('/items', itemRoutes);
+app.use('/orders', orderRoutes);
 
 app.get('/slow', async (req: Request, res: Response) => {
   const duration = parseInt(req.query.duration as string) || 3000;

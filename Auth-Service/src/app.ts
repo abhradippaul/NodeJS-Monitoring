@@ -7,6 +7,7 @@ import authRoutes from './routes/auth.routes.js';
 import { register, startMonitoring } from './utils/metrics.js';
 import logger from './logger/index.js';
 import logRoutes from './utils/logRoutes.js';
+import { config } from './utils/config.js';
 
 const app: Express = express();
 
@@ -43,6 +44,8 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
-logRoutes(app);
+if (config.nodeEnv === 'dev') {
+  logRoutes(app);
+}
 
 export default app;

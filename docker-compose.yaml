@@ -21,12 +21,24 @@ services:
       - nodejs-monitoring
     restart: unless-stopped
 
+  order-service:
+    build: ./Order-Service
+    container_name: order-service
+    ports:
+      - "3003:3003"
+    env_file:
+      - ./Order-Service/.env
+    networks:
+      - nodejs-monitoring
+    restart: unless-stopped
+
   load-test:
     image: python:3.11-slim
     container_name: load-test
     depends_on:
       - item-service
       - auth-service
+      - order-service
     volumes:
       - ./scripts:/scripts
     environment:
